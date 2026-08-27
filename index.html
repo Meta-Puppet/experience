@@ -1,0 +1,346 @@
+<title>Unity側の実装</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500;700&display=swap');
+
+:root{
+  --paper:#020202;
+  --paper-raised:#0e0e10;
+  --ink:#f2f0ee;
+  --ink-soft:#9a9a9e;
+  --ink-faint:#5c5c60;
+  --rule:#232326;
+  --rule-strong:#35353a;
+  --accent:#e78fb3;
+  --accent-soft:#3a2530;
+  --accent2:#6fbfc4;
+  --accent2-soft:#193638;
+  --code-bg:#0a0a0b;
+  --code-ink:#e7e6e0;
+  --code-accent:#e78fb3;
+  --code-accent2:#6fbfc4;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --paper:#faf9f6; --paper-raised:#f2f0eb; --ink:#171a1d; --ink-soft:#4b5459;
+    --ink-faint:#8b9296; --rule:#d8d5cd; --rule-strong:#b9b5aa;
+    --accent:#b8500e; --accent-soft:#e8c7a9; --accent2:#14646b; --accent2-soft:#bcdadc;
+    --code-bg:#171a1d; --code-ink:#e7e6e0; --code-accent:#e0954f; --code-accent2:#6fbfc4;
+  }
+}
+:root[data-theme="light"]{
+  --paper:#faf9f6; --paper-raised:#f2f0eb; --ink:#171a1d; --ink-soft:#4b5459;
+  --ink-faint:#8b9296; --rule:#d8d5cd; --rule-strong:#b9b5aa;
+  --accent:#b8500e; --accent-soft:#e8c7a9; --accent2:#14646b; --accent2-soft:#bcdadc;
+  --code-bg:#171a1d; --code-ink:#e7e6e0; --code-accent:#e0954f; --code-accent2:#6fbfc4;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Noto Sans JP","Hiragino Sans",sans-serif;
+  font-size:15.5px;
+  line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+}
+
+.site-header{
+  position:sticky; top:0; z-index:50; width:100%;
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--rule);
+}
+.site-header-inner{
+  max-width:760px; margin:0 auto; padding:16px 40px;
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+}
+.site-header .brand{display:inline-flex; align-items:center; line-height:0; opacity:.95; transition:opacity .15s ease;}
+.site-header .brand:hover{opacity:1;}
+.site-header img{height:40px; width:auto; display:block;}
+.site-nav{display:flex; gap:22px; font-family:"IBM Plex Mono",monospace; font-size:12.5px; letter-spacing:.04em;}
+.site-nav a{color:var(--ink-faint); text-decoration:none;}
+.site-nav a:hover{color:var(--accent);}
+.site-nav a[aria-current="page"]{color:var(--ink);}
+
+.page{max-width:760px; margin:0 auto; padding:64px 40px 90px;}
+
+.cover{max-width:760px; margin:0 auto; padding:56px 40px 60px; border-bottom:1px solid var(--rule);}
+.cover-kicker{
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.18em; color:var(--accent);
+  text-transform:uppercase; display:flex; align-items:center; gap:10px; margin-bottom:22px;
+}
+.cover-kicker::before{content:""; width:26px; height:1px; background:var(--accent); display:inline-block;}
+.cover h1{
+  font-family:"Hanken Grotesk","Noto Sans JP",sans-serif; font-weight:800;
+  font-size:clamp(32px,5.6vw,48px); line-height:1.4; margin:0 0 20px; text-wrap:balance; letter-spacing:.01em;
+}
+.cover h1 em{font-style:normal; color:var(--accent);}
+.cover .sub{font-size:15.5px; color:var(--ink-soft); max-width:56ch; margin:0 0 34px; text-wrap:balance;}
+.cover-meta{
+  display:flex; flex-wrap:wrap; gap:28px 40px; font-family:"IBM Plex Mono",monospace; font-size:12px;
+  color:var(--ink-soft); border-top:1px solid var(--rule); padding-top:22px;
+}
+.cover-meta div span{display:block; color:var(--ink-faint); font-size:10px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:4px;}
+.cover-meta div b{color:var(--ink); font-weight:700; font-family:"Noto Sans JP",sans-serif; font-size:13.5px;}
+
+.chapter{border-top:1px solid var(--rule-strong); padding-top:46px; margin-top:10px;}
+.chapter:first-of-type{border-top:none;}
+.chapter-head{display:flex; align-items:baseline; gap:16px; margin-bottom:8px;}
+.chapter-num{font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--accent2); letter-spacing:.05em; white-space:nowrap;}
+.chapter-stage{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint);}
+.chapter h2{font-family:"Hanken Grotesk","Noto Sans JP",sans-serif; font-weight:700; font-size:26px; margin:6px 0 30px; text-wrap:balance;}
+.chapter h3{font-family:"Hanken Grotesk","Noto Sans JP",sans-serif; font-size:18.5px; font-weight:700; margin:38px 0 14px;}
+.chapter p{margin:0 0 20px;}
+
+.chapter a, .cover a, .footnotes a{color:var(--accent2); text-decoration-color:var(--rule-strong); text-underline-offset:2px;}
+.chapter a:visited, .cover a:visited, .footnotes a:visited{color:var(--accent2);}
+.chapter a:hover, .cover a:hover, .footnotes a:hover{color:var(--accent);}
+
+.spec{
+  background:var(--paper-raised); border:1px solid var(--rule); border-left:3px solid var(--accent2);
+  border-radius:2px; padding:20px 22px 6px; margin:28px 0; page-break-inside:avoid; break-inside:avoid;
+}
+.spec-title{font-family:"Noto Sans JP",sans-serif; font-size:12.5px; font-weight:700; letter-spacing:.04em; color:var(--accent2); margin-bottom:10px;}
+
+table.data{width:100%; border-collapse:collapse; margin:24px 0; font-size:13.5px;}
+table.data th{
+  text-align:left; font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.04em; font-weight:500;
+  color:var(--ink-faint); text-transform:uppercase; border-bottom:1px solid var(--rule-strong); padding:8px 14px 8px 0;
+}
+table.data td{border-bottom:1px solid var(--rule); padding:10px 14px 10px 0; vertical-align:top;}
+table.data td.num{font-family:"IBM Plex Mono",monospace; color:var(--accent2); font-weight:700; white-space:nowrap;}
+table.data td.label{font-weight:700; white-space:nowrap;}
+
+.diagram{margin:30px 0; border:1px solid var(--rule); background:var(--paper-raised); padding:22px; page-break-inside:avoid;}
+.diagram-title{font-family:"Noto Sans JP",sans-serif; font-size:12.5px; font-weight:700; color:var(--ink-faint); margin-bottom:14px;}
+.dg-row{display:flex; align-items:center; gap:0; flex-wrap:wrap;}
+.dg-box{
+  font-family:"IBM Plex Mono",monospace; font-size:12px; border:1px solid var(--rule-strong); background:var(--paper);
+  padding:10px 13px; border-radius:2px; text-align:center; line-height:1.5;
+}
+.dg-box b{display:block; font-size:12.5px; color:var(--ink); font-family:"Noto Sans JP",sans-serif;}
+.dg-box small{color:var(--ink-faint); font-size:10px;}
+.dg-box.hot{border-color:var(--accent);} .dg-box.hot b{color:var(--accent);}
+.dg-box.gpu{border-color:var(--accent2);} .dg-box.gpu b{color:var(--accent2);}
+.dg-arrow{color:var(--ink-faint); padding:0 8px; font-size:14px;}
+
+code{
+  font-family:"IBM Plex Mono",monospace; background:var(--paper-raised); padding:1px 5px; border-radius:2px;
+  font-size:.9em; border:1px solid var(--rule);
+}
+.code-wrap{margin:24px 0; page-break-inside:avoid; break-inside:avoid;}
+.code-label{font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--ink-faint); margin-bottom:6px; letter-spacing:.05em;}
+pre{
+  background:var(--code-bg); color:var(--code-ink); padding:18px 20px; border-radius:3px; overflow-x:auto;
+  font-family:"IBM Plex Mono",monospace; font-size:12.5px; line-height:1.7; margin:0;
+}
+pre .k{color:var(--code-accent2);} pre .c{color:var(--code-accent);}
+
+.footnotes{margin-top:34px; padding-top:16px; border-top:1px solid var(--rule);}
+.footnotes ol{margin:0; padding-left:1.3em; font-size:12.5px; color:var(--ink-soft); line-height:1.7;}
+.footnotes li{margin-bottom:8px;}
+sup.fnref{font-family:"IBM Plex Mono",monospace; font-size:10px; color:var(--accent2); margin-left:1px;}
+sup.fnref a{color:inherit; text-decoration:none;}
+
+.notice{background:var(--paper-raised); border-left:3px solid var(--accent); padding:14px 18px; margin:24px 0; font-size:14px; color:var(--ink-soft);}
+
+.signature{
+  margin-top:56px; padding-top:22px; border-top:1px solid var(--rule); display:flex;
+  justify-content:space-between; align-items:flex-end; font-size:13px; color:var(--ink-faint);
+  font-family:"IBM Plex Mono",monospace;
+}
+.pagefoot{
+  max-width:760px; margin:0 auto; padding:30px 40px 60px; color:var(--ink-faint);
+  font-family:"IBM Plex Mono",monospace; font-size:11px; text-align:center; letter-spacing:.05em;
+}
+
+@media print{
+  .site-header{display:none;}
+  body{background:#fff; color:#111; font-size:11pt;}
+  .page,.cover,.pagefoot{max-width:none; padding-left:0; padding-right:0;}
+  @page{size:A4; margin:24mm 18mm;}
+  .chapter{page-break-before:always; border-top:none; padding-top:0;}
+  .chapter:first-of-type{page-break-before:avoid;}
+  pre{background:#f0efe9; color:#111; border:1px solid #ccc;}
+  pre .k, pre .c{color:#111; font-weight:700;}
+  .spec, .notice{background:#fff;}
+  a{color:inherit; text-decoration:underline;}
+}
+@media (max-width:600px){
+  .page,.cover,.pagefoot{padding-left:20px; padding-right:20px;}
+}
+</style>
+
+<div class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="https://meta-puppet.github.io/" aria-label="MetaPuppet トップへ戻る"><img src="mp_logo.png" alt="MetaPuppet"></a>
+    <nav class="site-nav">
+      <a href="https://meta-puppet.github.io/">Reports</a>
+      <a href="https://meta-puppet.github.io/credits/">Credits</a>
+    </nav>
+  </div>
+</div>
+
+<article>
+
+<section class="cover">
+  <div class="cover-kicker">Software Notes — MetaPuppet</div>
+  <h1>Unity側の、<em>体を乗っ取る</em><br>実装</h1>
+  <p class="sub">受信した映像・マスクと、Questの手指トラッキングから、参加者を実際に操作する体験をUnity側でどう組み立てているかの記録。</p>
+  <div class="cover-meta">
+    <div><span>Project</span><b>MetaPuppet</b></div>
+    <div><span>Scope</span><b>演出進行・当たり判定・ポーズ合成・物理アクチュエータ</b></div>
+  </div>
+</section>
+
+<div class="page">
+
+<section class="chapter">
+  <div class="chapter-head">
+    <span class="chapter-num">Prologue</span>
+    <span class="chapter-stage">Scope Note</span>
+  </div>
+  <h2>まえがき</h2>
+
+  <p>先に断っておかなければならないことがある。このリポジトリにはUnityプロジェクトのコピーが複数残っていて、リポジトリ直下にある版には、実は今回説明するリズムゲームも、当たり判定も、アクチュエータ制御も存在しない。実際に動いているものは、開発の枝分かれ（worktree）の中にだけ存在している。この記録は、その実際に動いている方の実装を対象にしている。古い方の版を見て「書いてあることと違う」と思った場合、それは記録の誤りではなく、単にリポジトリの整理が追いついていないだけである。</p>
+
+  <p>Unity側がやっていることは、大きく3つある。PC側から届く映像・人物マスクと、Questの手指トラッキングを受け取って、参加者にリズムに合わせて手を動かしてもらう演出を進行させること。参加者の体を人形として3Dモデルまたは本人の映像そのもので表示すること。そして、その判定結果を実際に物理的なワイヤー駆動の人形機構へ送り、参加者の腕を外側から引っ張ること。最後のワイヤー駆動は、見た目の演出ではなく、実際に体を動かされる装置である。</p>
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <span class="chapter-num">Chapter 01</span>
+    <span class="chapter-stage">Stage Direction</span>
+  </div>
+  <h2>3つの見せ方を、1つの音楽の時計でつなぐ</h2>
+
+  <p>体験は、参加者から見て3つの段階を順番に通る。最初は一人称視点で、自分の手の位置に浮かぶ的だけを見ながらリズムに合わせて手を動かす段階。次に三人称視点に切り替わり、自分の分身である3Dの人形が、同じリズムに合わせて手を動かしているのが見える段階。最後に、その人形が本人の実写映像（PC側のRVMマスキングによる切り抜き映像）に置き換わる段階。3つとも、判定のロジックや的の配置は同じで、見せ方だけが変わる。</p>
+
+  <p>この3段階の切り替えタイミングは、Unityの通常のフレーム時間（<code>Time.time</code>）ではなく、オーディオの再生時計（<code>AudioSettings.dspTime</code>）<sup class="fnref" id="fnref-dsp"><a href="#fn-dsp">[1]</a></sup>を基準に計算している。フレーム時間は描画の重さで簡単にずれるが、音楽の再生時計はハードウェアの音声出力に同期しているため、これを基準にしないと、判定の的と実際に鳴っている音がずれてしまう。一人称段階を32拍、3〜5秒の暗転を挟んで三人称の人形段階を32拍、また暗転を挟んで実写段階を80拍（80BPMなら60秒）という尺で組んでおり、暗転の間はヘッドセットの視点位置を動かさない、という制約も入れている。視点が動いた状態で暗転すると、明けたときに参加者が空間の中で自分の位置を見失いやすいためである。</p>
+
+  <p>PC側から届く実写映像・マスクのストリームが、実写段階の途中で途切れた場合は、判定を止めずに三人称の人形表示へ自動的に戻す作りになっている。見た目の演出が壊れても、参加者が今まさに動かしている手の判定自体は止めない、という優先順位である。</p>
+
+  <div class="footnotes">
+    <ol>
+      <li id="fn-dsp">Unityのオーディオシステムが内部で持っている、音声再生専用の高精度な時計。<code>AudioSource.PlayScheduled()</code>と組み合わせて使うと、「何フレーム目に鳴らすか」ではなく「その時刻ちょうどに鳴らす」という、フレームレートに左右されない予約ができる。ゲーム全体の時間管理に使う<code>Time.time</code>とは別の時計である。</li>
+    </ol>
+  </div>
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <span class="chapter-num">Chapter 02</span>
+    <span class="chapter-stage">Rhythm Judgment</span>
+  </div>
+  <h2>手の高さで叩くリズムゲーム</h2>
+
+  <p>判定の仕組み自体は、一人称・三人称・実写のどの段階でも共通している。参加者は左右の手をQuestのハンドトラッキングで追跡されていて、譜面（あらかじめ決めておいた、拍・左右の手・高さのリストのようなもの）で指定された時刻・手・高さの位置に、手が一定の範囲内で入っていれば「成功」になる。的への接近は、開始と終わりで速度がゼロになる緩急のついた曲線（minimum jerk<sup class="fnref" id="fnref-jerk"><a href="#fn-jerk">[1]</a></sup>）で動かしており、機械的な等速移動より、人の手の動きに近い自然な加減速に見えるようにしている。</p>
+
+  <p>ゲーム開始前に、参加者は両手を体の正面あたりの高さで一定時間（1.5秒）静止させる必要がある。これは判定の基準点を決めるための較正で、このとき記録した手の位置を「中央の高さ」として、そこから上下10cmの位置に「高い」「低い」の的を配置する。較正時にはヘッドセットの傾き（上下・回転）は使わず、水平方向の向きだけを使う。ヘッドセットをどれだけ傾けて構えていても、的の高さの基準が参加者ごとにぶれないようにするためである。</p>
+
+  <p>譜面そのものにも制約を設けている。左右2段の高さをまたぐ移動には最低4拍、隣接する1段の移動には最低2拍を要求する検証を、ゲーム開始時に自動で行い、違反する譜面が仕込まれていた場合はゲームを開始させずにエラーを出す。これは演出上の都合ではなく、後述する物理ワイヤー駆動の機構が、それより速くは腕を動かせないためである。譜面を作る人間が、実機の可動速度を意識しなくても、無理な譜面を作った時点で機械的に弾かれる。</p>
+
+  <div class="footnotes">
+    <ol>
+      <li id="fn-jerk">物体が動き始める瞬間と止まる瞬間、どちらも速度・加速度がゼロになるように設計された動きの曲線。人間の腕の動きの観察からよく使われる近似で、等速直線運動よりも自然な「滑らかに加速し、滑らかに止まる」動きに見える。</li>
+    </ol>
+  </div>
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <span class="chapter-num">Chapter 03</span>
+    <span class="chapter-stage">Silhouette as Collider</span>
+  </div>
+  <h2>マスクそのものを当たり判定にする</h2>
+
+  <p>実写段階でも一人称・三人称段階と同じ障害物・的の仕組みを流用するために、「ある世界座標の点が、参加者の映像シルエットの内側にあるかどうか」を判定するモジュールを別に用意している。物理エンジンのコライダーは使っていない。判定したい点をステレオ映像のUV座標に変換し、そこにPC側から届いている人物マスク（第4章とは別の記録で扱ったRVMの出力）をサンプリングして、値があるかどうかを見ているだけである。</p>
+
+  <p>ステレオ映像なので、左目用・右目用それぞれのマスクで同じ点を独立にサンプリングし、両目が同時に「人物あり」と判定して初めて命中とする。これは、片目のマスクだけがノイズで誤反応した場合に、誤判定をそのまま採用してしまわないためのガードである。判定点1つにつき、中心と、その周囲8点のリング状のサンプル点も見て、一定割合（既定25%）以上が命中していれば「衝突」とする設計になっており、マスクの輪郭付近のギザギザした境界で判定が一瞬だけ点滅するような誤反応を抑えている。</p>
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <span class="chapter-num">Chapter 04</span>
+    <span class="chapter-stage">Pose Fusion</span>
+  </div>
+  <h2>Questの手を基準に、映像由来の姿勢を合わせ込む</h2>
+
+  <p>三人称の人形段階では、参加者の全身の姿勢（肩・肘・腰・膝など）を、PC側の姿勢推定（RTMPose、または予備経路としてのMediaPipe）から受け取って人形に反映している。ただし、この映像由来の姿勢をそのまま人形に当てはめているわけではない。ゲームの判定と、後述するワイヤー駆動には、常にQuestのヘッドセットとハンドトラッキングの位置を使い、映像由来の姿勢はそれ以外の部位（胴体・肘・膝・足）の見た目を補うためだけに使う、という優先順位を徹底している。</p>
+
+  <p>この2つの座標系（映像由来の骨格と、Questの実測位置）を1つにまとめる処理では、両手の位置と、両手の中点から頭までの向きという3点から、映像側とQuest側それぞれで直交した基準の軸を作り、そこから回転・拡大縮小・平行移動をまとめて求めている。求めた変換を映像側の骨格全体にかけたうえで、頭と両手についてはさらにQuestの実測位置へ強く寄せる。人形の腕や脚の曲げ方自体は、関節を2つ持つ簡易的な逆運動学（IK）<sup class="fnref" id="fnref-ik"><a href="#fn-ik">[1]</a></sup>で解いており、肘や膝が逆方向に折れてしまわないよう、伸びきる直前で角度を頭打ちにする制限も入れている。</p>
+
+  <div class="footnotes">
+    <ol>
+      <li id="fn-ik">Inverse Kinematics（逆運動学）。「肩と手首をこの位置にしたいとき、間の肘は何度に曲げればよいか」を、手先の目標位置から逆算して求める計算。関節が2つ（肘・膝など）だけの単純な鎖であれば、三角形の辺の長さの関係から解析的に一発で解ける。</li>
+    </ol>
+  </div>
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <span class="chapter-num">Chapter 05</span>
+    <span class="chapter-stage">Physical Actuation</span>
+  </div>
+  <h2>判定結果を、実際に腕を引くワイヤーへ送る</h2>
+
+  <p>ここまでの判定はすべて画面の中で完結する話だが、MetaPuppetにはもう一段、物理的な出力がある。左右の手首・肘に対応する4本のワイヤーを、モーターで巻き取る機構が実機として存在し、ゲーム内の衝突判定の結果に応じて、各ワイヤーの張力をUDP経由で毎秒最大60回、マイコン（ESP32）へ送っている。参加者が画面の中の的を外すと、その情報が実際に腕を引く力に変換される。見た目の演出の話ではなく、参加者の体を外から実際に操作する部分である。</p>
+
+  <p>物理的に人を操作する装置である以上、安全側の設計にも相応の手当てが要る。装置の起動時には「操作対象が誰も装着していない状態」であることを確認する試験を行い、参加者が両手で1.25秒間つまむジェスチャー、またはキーボードのEscapeキーで、いつでも緊急停止できるようにしてある。緊急停止は一度かかると自動では解除されず、アプリ側とマイコン側の橋渡しプログラムの両方を再起動しないと解除できない、という意図的に面倒な手順にしてある。</p>
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <span class="chapter-num">Chapter 06</span>
+    <span class="chapter-stage">XR / Rendering</span>
+  </div>
+  <h2>XR側の設定と、会場での負荷対策</h2>
+
+  <p>XR周りはOpenXR<sup class="fnref" id="fnref-openxr"><a href="#fn-openxr">[1]</a></sup>を土台に、Metaの提供する拡張機能、手指トラッキング用のパッケージ、XR Interaction Toolkitを組み合わせて構成している。ステレオ描画は、第6章（PC側の記録）で触れたシングルパス・インスタンシングを、Android・PC双方の描画設定で使っている。</p>
+
+  <p>Composition Layers<sup class="fnref" id="fnref-complayer"><a href="#fn-complayer">[2]</a></sup>というOpenXRの機能を使うためのパッケージ自体はプロジェクトに入っているが、実際にはどこからも参照されていない。導入だけして使わなかった、ということになる。映像やマスクの合成は、通常の板ポリゴンとシェーダーで行っている。</p>
+
+  <p>会場でQuest単体（スタンドアロン）動作させる場合は72Hzを目標にし、GPU負荷が高いときはフォベーテッドレンダリング<sup class="fnref" id="fnref-foveation"><a href="#fn-foveation">[3]</a></sup>の強度を上げる、という調整を行っている。ボリューメトリックフォグや後処理エフェクトは、Quest単体動作では画質より速度を優先してほぼ無効化し、指数関数フォグと、数を32個までに絞ったパーティクルに置き換えている。PC接続時（PCVR）は、逆にRVMの推論時間とUnityのGPU負荷を別々に測って、どちらが原因でコマ落ちしているかを切り分ける、という運用手順を会場向けの手順書に残している。</p>
+
+  <div class="spec">
+    <div class="spec-title">Quest単体動作時の実装値</div>
+    <table class="data">
+      <tr><th>項目</th><th>値</th></tr>
+      <tr><td>目標フレームレート</td><td class="num">72 Hz</td></tr>
+      <tr><td>フォベーテッドレンダリング強度</td><td class="num">0.55（GPU負荷時 0.65）</td></tr>
+      <tr><td>レンダースケール</td><td class="num">0.8</td></tr>
+      <tr><td>フォグパーティクル上限</td><td class="num">32個</td></tr>
+      <tr><td>ステレオ描画方式</td><td class="num">シングルパス・インスタンシング</td></tr>
+    </table>
+  </div>
+
+  <p>Quest単体動作では、そもそもPC側のRVM推論DLLが存在しないため、実写段階には進めず、三人称の人形段階までで構成が止まる。PCVR動作とQuest単体動作で、体験の最終段階が異なる、ということになる。</p>
+
+  <div class="footnotes">
+    <ol>
+      <li id="fn-openxr">VRヘッドセットのメーカーごとに異なっていたAPIを統一するための、業界標準の仕様。OpenXR対応のアプリは、対応しているヘッドセットであればメーカーを問わず動く。</li>
+      <li id="fn-complayer">通常、VRの映像はUnityが1枚の画像として毎フレーム描画してからヘッドセットに渡すが、Composition Layersは特定の平面や動画だけをOpenXRのランタイム側に直接渡し、ヘッドセット側で合成させる仕組み。負荷を下げたり、文字などをより鮮明に見せたりする用途で使われる。</li>
+      <li id="fn-foveation">人間の目は視界の中心以外の解像度低下に気づきにくいことを利用し、視線の中心から離れた領域のレンダリング解像度を意図的に落として負荷を下げる技術。</li>
+    </ol>
+  </div>
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <span class="chapter-num">Epilogue</span>
+    <span class="chapter-stage">Summary</span>
+  </div>
+  <h2>あとがき</h2>
+
+  <p>PC側の記録がレイテンシとの戦いだったのに対し、Unity側で扱っている問題の性質は少し違う。判定・演出・物理アクチュエータという、性質の異なる3つの系統を、1つの音楽の時計とQuestの実測位置という2つの基準だけで矛盾なく束ねること。そして、譜面の速度制限のように、ソフトウェアの都合ではなく実機の可動速度という物理的な制約を、コードの側に持ち込んで検証すること。この2点が、Unity側の実装で繰り返し出てくる考え方だった。</p>
+
+  <div class="signature">
+    <div>MetaPuppet — Unity Implementation Notes</div>
+  </div>
+</section>
+
+</div>
+
+<div class="pagefoot">MetaPuppet</div>
