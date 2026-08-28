@@ -379,6 +379,11 @@ sup.fnref a{color:inherit; text-decoration:none;}
 
   <p>PCVRでは、この光に<a href="https://github.com/CristianQiu/Unity-URP-Volumetric-Light">URP用のボリューメトリックフォグ</a>（CristianQiu氏）を合わせている。空間を薄い霧で満たし、ライトの光がその霧に散乱する量をレイマーチング（視線に沿って少しずつ進みながら霧の濃さを積算していく描画法）で計算するので、光の筋が画面効果ではなく空間の中の体積として立つ。VRだと頭を動かして光の筋を横から覗き込めるため、平面的なグロー効果との差がはっきり出る。煙で満たした部屋の映写光を、触れられそうな立体として見せたAnthony McCallの<a href="https://en.wikipedia.org/wiki/Line_Describing_a_Cone">Line Describing a Cone</a>（1973）の見え方を、リアルタイムの霧でやっている。フォグの濃度は後述する演出強度の数値と連動していて、実写段階に近づくほど濃くなる。Quest単体動作ではこのフォグは重すぎて焚けず、安い近似に差し替えている（第7章）。</p>
 
+  <div class="embed">
+    <img src="https://whitneymedia.org/assets/artwork/15286/926_IntoTheLight_VW35_035.jpg" alt="Line Describing a Coneの展示風景。煙の中に円錐状の映写光が立体として浮かぶ" loading="lazy">
+    <div class="embed-caption">Anthony McCall, Line Describing a Cone, 1973（出典: <a href="https://whitney.org/collection/works/15286">Whitney Museum of American Art</a>）</div>
+  </div>
+
   <h3>人形が本人に変わる瞬間のシェーダー</h3>
   <p>この体験でいちばん演出的に重要なのは、三人称の人形が、本人の実写映像に置き換わる瞬間である。ここは専用のシェーダーを書いた。仕組みは1枚のしきい値マップに集約されている。人形の表面を既定48×48の格子に切り、格子ごとに乱数で固有の値を持たせ、その上にInterleaved Gradient Noise<sup class="fnref" id="fnref-dither"><a href="#fn-dither">[2]</a></sup>というより細かい規則的なノイズを混ぜて、画素ごとに0から1の値を1つ決める。進行度がその値を超えた画素から、人形の色の代わりに本人の映像が表示される。値の低い画素から先に切り替わるので、序盤はまばらな点の群れ、終盤は面になり、写真の現像に近い見え方になる。しきい値の判定幅は0.04と狭くしてあって、境界がなめらかに溶けずに、粒のまま進む。</p>
 
