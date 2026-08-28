@@ -164,6 +164,7 @@ sup.fnref a{color:inherit; text-decoration:none;}
 
 .embed{margin:28px 0;}
 .embed iframe{width:100%; aspect-ratio:16/9; border:1px solid var(--rule-strong); border-radius:2px; display:block; background:#000;}
+.embed img{width:100%; height:auto; border:1px solid var(--rule-strong); border-radius:2px; display:block;}
 .embed-caption{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint); margin-top:8px;}
 
 .signature{
@@ -267,6 +268,11 @@ sup.fnref a{color:inherit; text-decoration:none;}
   <p>判定の仕組み自体は、一人称・三人称・実写のどの段階でも共通している。参加者は左右の手をQuestのハンドトラッキングで追跡されていて、譜面（あらかじめ決めておいた、拍・左右の手・高さのリストのようなもの）で指定された時刻・手・高さの位置に、手が一定の範囲内で入っていれば「成功」になる。的への接近は、開始と終わりで速度がゼロになる緩急のついた曲線（minimum jerk<sup class="fnref" id="fnref-jerk"><a href="#fn-jerk">[1]</a></sup>）で動かしており、機械的な等速移動より、人の手の動きに近い自然な加減速に見えるようにしている。</p>
 
   <p>操作の対応付けを体に覚えさせてから、その意味を変える設計は、<a href="https://ja.wikipedia.org/wiki/%E3%83%96%E3%83%A9%E3%82%B6%E3%83%BC%E3%82%BA_2%E4%BA%BA%E3%81%AE%E6%81%AF%E5%AD%90%E3%81%AE%E7%89%A9%E8%AA%9E">Brothers: A Tale of Two Sons</a>（2013）が参考になった。左右のスティックを兄と弟それぞれに割り当て、両手で2人を同時に動かす操作をプレイヤーの体に学習させたうえで、物語の進行によって片方の入力が持つ意味を変えてしまうゲームである。本作でも、開始前の較正（両手を静止させ、その高さを基準に的を置く）が決めているのはボタン配置の類ではなく、「この高さに手を上げる」という動作と判定との対応付けで、動作自体は最後まで変わらないまま、その先に付いているものが段階ごとに的から人形、人形から自分の映像へ差し替わっていく。</p>
+
+  <div class="embed">
+    <img src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2153350/ss_a4f5bd8bfb27fceedb081290cce6c5c323b02cd0.1920x1080.jpg" alt="Brothers: A Tale of Two Sons のスクリーンショット。兄と弟が並んで進む場面" loading="lazy">
+    <div class="embed-caption">Brothers: A Tale of Two Sons（出典: <a href="https://store.steampowered.com/app/225080/Brothers__A_Tale_of_Two_Sons/">Steam ストアページ</a>）</div>
+  </div>
 
   <p>譜面そのものにも制約を設けている。高さ2段ぶん（20cm）を一気に飛ぶ移動には最低4拍、隣の段への移動には最低2拍の間隔を要求する検証を、ゲーム開始時に自動で行い、違反する譜面が仕込まれていた場合はゲームを開始させずにエラーを出す。後述する物理ワイヤー駆動の機構が、それより速くは腕を動かせないためである。譜面を作る人間が、実機の可動速度を意識しなくても、無理な譜面を作った時点で機械的に弾かれる。</p>
 
