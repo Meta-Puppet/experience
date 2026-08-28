@@ -294,6 +294,11 @@ sup.fnref a{color:inherit; text-decoration:none;}
 
   <p>カメラで抜いたシルエットをそのまま当たり判定に使う作りは、メディアアートに前例が多い。Myron Kruegerの<a href="https://en.wikipedia.org/wiki/Videoplace">Videoplace</a>（1970年代）では、カメラに写った観客の輪郭が画面の中の図形を押したりつかんだりするし、<a href="https://en.wikipedia.org/wiki/Camille_Utterback">Camille Utterback</a>とRomy AchituvのText Rain（1999）では、落ちてくる文字が観客のシルエットの上に積もる。どちらも体の形をポリゴンに起こさず、映像の画素をそのまま判定に使っていて、本作の判定もこれと同じ作りである。</p>
 
+  <div class="embed">
+    <img src="https://ars.electronica.art/aeblog/files/2022/01/videoplace_2000x1000_3.jpg" alt="Videoplaceの体験風景。スクリーンに映った観客のシルエットがグラフィックと重なっている" loading="lazy">
+    <div class="embed-caption">Myron Krueger, Videoplace（出典: <a href="https://ars.electronica.art/aeblog/en/2022/01/13/throwback-videoplace/">Ars Electronica Blog "Throwback: Videoplace"</a>）</div>
+  </div>
+
   <p>ステレオ映像なので、左目用・右目用それぞれのマスクで同じ点を独立にサンプリングし、両目が同時に「人物あり」と判定して初めて命中とする。これは、片目のマスクだけがノイズで誤反応した場合に、誤判定をそのまま採用してしまわないためのガードである。判定点1つにつき、中心と、その周囲8点のリング状のサンプル点も見て、一定割合（既定50%）以上が命中していれば「衝突」とする設計になっており、マスクの輪郭付近のギザギザした境界で判定が一瞬だけ点滅するような誤反応を抑えている。</p>
 </section>
 
