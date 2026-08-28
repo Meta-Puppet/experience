@@ -162,6 +162,10 @@ sup.fnref a{color:inherit; text-decoration:none;}
 
 .notice{background:var(--paper-raised); border-left:3px solid var(--accent); padding:14px 18px; margin:24px 0; font-size:14px; color:var(--ink-soft);}
 
+.embed{margin:28px 0;}
+.embed iframe{width:100%; aspect-ratio:16/9; border:1px solid var(--rule-strong); border-radius:2px; display:block; background:#000;}
+.embed-caption{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint); margin-top:8px;}
+
 .signature{
   margin-top:56px; padding-top:22px; border-top:1px solid var(--rule); display:flex;
   justify-content:space-between; align-items:flex-end; font-size:13px; color:var(--ink-faint);
@@ -238,9 +242,9 @@ sup.fnref a{color:inherit; text-decoration:none;}
 
   <p>体験は、参加者から見て3つの段階を順番に通る。最初は一人称視点で、自分の手の位置に浮かぶ的だけを見ながらリズムに合わせて手を動かす段階。次に三人称視点に切り替わり、自分の分身である3Dの人形が、同じリズムに合わせて手を動かしているのが見える段階。最後に、その人形が本人の実写映像（PC側のRVMマスキングによる切り抜き映像）に置き換わる段階。3つとも、判定のロジックや的の配置は同じで、見せ方だけが変わる。</p>
 
-  <p>一度教えた操作の意味を、後から書き換えていく進行である。この構造はゲームに先行例がある。<a href="https://ja.wikipedia.org/wiki/%E3%83%90%E3%82%A4%E3%82%AA%E3%82%B7%E3%83%A7%E3%83%83%E3%82%AF">BioShock</a>（2007）の「Would you kindly?」は、目標を与えられれば実行するというFPSの慣習を何時間も使わせたあとで、その従順なプレイ自体を物語上の操縦として読み替えさせた。本作で参加者が覚えるのは「音に合わせて手を上げ下げする」という操作だけだが、同じ操作の対象が的、人形、自分の実写と進むにつれ、やっていたことが人形の操作で、最終的には自分自身の身体の操作だったと読み替えられていく。三人称段階で自分の分身を外から眺める作りは、OneShotやUndertaleがプレイヤーとプレイヤーキャラクターを別の存在として扱った設計に連なる。</p>
+  <p>一度教えた操作の意味を、後から書き換えていく進行である。この構造はゲームに先行例がある。<a href="https://ja.wikipedia.org/wiki/%E3%83%90%E3%82%A4%E3%82%AA%E3%82%B7%E3%83%A7%E3%83%83%E3%82%AF">BioShock</a>（2007）の「Would you kindly?」は、目標を与えられれば実行するというFPSの慣習を何時間も使わせたあとで、その従順なプレイ自体を物語上の操縦として読み替えさせた。<a href="https://ja.wikipedia.org/wiki/The_Stanley_Parable">The Stanley Parable</a>（2013）は、ナレーターの指示に従うことも逆らうことも含めて、ゲームから指示されるということ自体を素材にしたゲームで、指示に従って体を動かし続ける本作の参加者の状態を考えるとき、いちばん近くにあった。本作で参加者が覚えるのは「音に合わせて手を上げ下げする」という操作だけだが、同じ操作の対象が的、人形、自分の実写と進むにつれ、やっていたことが人形の操作で、最終的には自分自身の身体の操作だったと読み替えられていく。三人称段階で自分の分身を外から眺める作りは、OneShotやUndertaleがプレイヤーとプレイヤーキャラクターを別の存在として扱った設計に連なる。</p>
 
-  <p>この3段階の切り替えタイミングは、Unityの通常のフレーム時間（<code>Time.time</code>）ではなく、オーディオの再生時計（<code>AudioSettings.dspTime</code>）<sup class="fnref" id="fnref-dsp"><a href="#fn-dsp">[1]</a></sup>を基準に計算している。フレーム時間は描画の重さで簡単にずれるが、音楽の再生時計はハードウェアの音声出力に同期しているため、これを基準にしないと、判定の的と実際に鳴っている音がずれてしまう。一人称段階を32拍、暗転（既定5秒）を挟んで三人称の人形段階を32拍、少し長めの暗転（既定12秒）を挟んで実写段階を96拍（60BPMで96秒）という尺で組んでおり、暗転の間はヘッドセットの視点位置を動かさない、という制約も入れている。視点が動いた状態で暗転すると、明けたときに参加者が空間の中で自分の位置を見失いやすいためである。</p>
+  <p>この3段階の切り替えタイミングは、Unityの通常のフレーム時間（<code>Time.time</code>）ではなく、オーディオの再生時計（<code>AudioSettings.dspTime</code>）<sup class="fnref" id="fnref-dsp"><a href="#fn-dsp">[1]</a></sup>を基準に計算している。フレーム時間は描画の重さで簡単にずれるが、音楽の再生時計はハードウェアの音声出力に同期しているため、これを基準にしないと、判定の的と実際に鳴っている音がずれてしまう。一人称段階を32拍、暗転（既定5秒）を挟んで三人称の人形段階を32拍、少し長めの暗転（既定12秒）を挟んで実写段階を96拍（60BPMで96秒）という尺で組んでいる。</p>
 
   <p>PC側から届く実写映像・マスクのストリームが、実写段階の途中で途切れた場合は、判定を止めずに三人称の人形表示へ自動的に戻す作りになっている。見た目の演出が壊れても、参加者が今まさに動かしている手の判定自体は止めない、という優先順位である。</p>
 
@@ -333,7 +337,14 @@ sup.fnref a{color:inherit; text-decoration:none;}
   <h3>空と舞台</h3>
   <p>空はグラデーションのドーム（RitualSkyDome.shader）で、地平線が暗い灰、天頂がほとんど黒に近い紫。雲のむらは量を7%程度まで絞って、ごくゆっくり流している。舞台の床や構造物は黒・アイボリー・黄土・赤・青灰の配色で、これはバウハウスの舞台美術から取った。Oskar Schlemmerの<a href="https://en.wikipedia.org/wiki/Triadisches_Ballett">トリアディック・バレエ</a>（1922）は、衣装で人間を幾何学的な人形に見立てて踊らせた舞台で、参加者を人形として扱う本作が同じ学校の色を借りるのは筋が通っていると考えた。マテリアル（BauhausDecayLit.shader）は画像テクスチャを一切使わず、座標から計算で作るノイズ<sup class="fnref" id="fnref-noise"><a href="#fn-noise">[1]</a></sup>だけで、石の汚れ、表面の粗さのむら、角の摩耗を出している。テクスチャを読まない作りは、Quest単体動作のメモリと帯域の節約を兼ねる。</p>
 
-  <p>背景には彫像（サモトラケのニケやラオコーンなど、パブリックドメインのスキャンモデル）を置いている。動かない人体の造形が立っている舞台のイメージは、<a href="https://ja.wikipedia.org/wiki/%E3%83%89%E3%83%A9%E3%83%83%E3%82%B0%E3%82%AA%E3%83%B3%E3%83%89%E3%83%A9%E3%82%B0%E3%83%BC%E3%83%B3">ドラッグオンドラグーン</a>の最後の歌の場面に現れる巨大な石像から来ている。彫像は完全には静止させず、振幅4cm・周期50秒で横に揺らしている。見つめないと気づかない速さである。回転も選択肢にはあったが、重い石像がその場で回るのは滑稽に見えるのでやめて、横揺れと上下動だけにした、という判断をそのまま実装コメントに残してある。ライトには十数秒周期で首を振る動きを付けていて、フォグの中に光の筋が立つ。煙の中の光線を物体のように見せる手は、Anthony McCallの<a href="https://en.wikipedia.org/wiki/Line_Describing_a_Cone">Line Describing a Cone</a>（1973）が知られている。</p>
+  <p>背景には彫像（サモトラケのニケやラオコーンなど、パブリックドメインのスキャンモデル）を置いている。動かない人体の造形が立っている舞台のイメージは、<a href="https://ja.wikipedia.org/wiki/%E3%83%89%E3%83%A9%E3%83%83%E3%82%B0%E3%82%AA%E3%83%B3%E3%83%89%E3%83%A9%E3%82%B0%E3%83%BC%E3%83%B3">ドラッグオンドラグーン</a>の最後の歌の場面に現れる巨大な石像から来ている。</p>
+
+  <div class="embed">
+    <iframe src="https://embed.nicovideo.jp/watch/sm22664999" title="ドラッグオンドラグーン 最後の歌" allowfullscreen loading="lazy"></iframe>
+    <div class="embed-caption">ドラッグオンドラグーン「最後の歌」（<a href="https://www.nicovideo.jp/watch/sm22664999">ニコニコ動画</a>）</div>
+  </div>
+
+  <p>彫像は完全には静止させず、振幅4cm・周期50秒で横に揺らしている。見つめないと気づかない速さである。回転も選択肢にはあったが、重い石像がその場で回るのは滑稽に見えるのでやめて、横揺れと上下動だけにした、という判断をそのまま実装コメントに残してある。ライトには十数秒周期で首を振る動きを付けていて、フォグの中に光の筋が立つ。煙の中の光線を物体のように見せる手は、Anthony McCallの<a href="https://en.wikipedia.org/wiki/Line_Describing_a_Cone">Line Describing a Cone</a>（1973）が知られている。</p>
 
   <h3>人形が本人に変わる瞬間のシェーダー</h3>
   <p>この体験でいちばん演出的に重要なのは、三人称の人形が、本人の実写映像に置き換わる瞬間である。ここは専用のシェーダー（MetaPuppetCalibrationReveal.shader）を書いた。設計方針をシェーダーのコメントにそのまま書いてあるので引用すると、これは魔法の変身ではなく、人形と実際の体の対応付けが登録されていく過程の表現である。進行度が0から1に進むにつれ、人形の表面のあちこちに本人の映像の斑点が現れ、まばらな点の群れから徐々に全面へ育っていく。写真の現像に近い見え方で、境界は粒状のディザパターン<sup class="fnref" id="fnref-dither"><a href="#fn-dither">[2]</a></sup>で刻んでいる。</p>
