@@ -245,6 +245,11 @@ sup.fnref a{color:inherit; text-decoration:none;}
 
   <p>一度教えた操作の意味を、後から書き換えていく進行である。この構造はゲームに先行例がある。<a href="https://ja.wikipedia.org/wiki/%E3%83%90%E3%82%A4%E3%82%AA%E3%82%B7%E3%83%A7%E3%83%83%E3%82%AF">BioShock</a>（2007）の「Would you kindly?」は、目標を与えられれば実行するというFPSの慣習を何時間も使わせたあとで、その従順なプレイ自体を物語上の操縦として読み替えさせた。<a href="https://ja.wikipedia.org/wiki/The_Stanley_Parable">The Stanley Parable</a>（2013）は、ナレーターの指示に従うことも逆らうことも含めて、ゲームから指示されるということ自体を素材にしたゲームで、指示に従って体を動かし続ける本作の参加者の状態を考えるとき、いちばん近くにあった。本作で参加者が覚えるのは「音に合わせて手を上げ下げする」という操作だけだが、同じ操作の対象が的、人形、自分の実写と進むにつれ、やっていたことが人形の操作で、最終的には自分自身の身体の操作だったと読み替えられていく。三人称段階で自分の分身を外から眺める作りは、OneShotやUndertaleがプレイヤーとプレイヤーキャラクターを別の存在として扱った設計に連なる。</p>
 
+  <div class="embed">
+    <iframe src="https://www.youtube.com/embed/fBtX0S2J32Y" title="The Stanley Parable Launch Trailer" allowfullscreen loading="lazy"></iframe>
+    <div class="embed-caption">The Stanley Parable — Launch Trailer（出典: <a href="https://www.youtube.com/watch?v=fBtX0S2J32Y">YouTube, stanleyparable</a>）</div>
+  </div>
+
   <p>この3段階の切り替えタイミングは、Unityの通常のフレーム時間（<code>Time.time</code>）ではなく、オーディオの再生時計（<code>AudioSettings.dspTime</code>）<sup class="fnref" id="fnref-dsp"><a href="#fn-dsp">[1]</a></sup>を基準に計算している。フレーム時間は描画の重さで簡単にずれるが、音楽の再生時計はハードウェアの音声出力に同期しているため、これを基準にしないと、判定の的と実際に鳴っている音がずれてしまう。一人称段階を32拍、暗転（既定5秒）を挟んで三人称の人形段階を32拍、少し長めの暗転（既定12秒）を挟んで実写段階を96拍（60BPMで96秒）という尺で組んでいる。</p>
 
   <p>PC側から届く実写映像・マスクのストリームが、実写段階の途中で途切れた場合は、判定を止めずに三人称の人形表示へ自動的に戻す作りになっている。見た目の演出が壊れても、参加者が今まさに動かしている手の判定自体は止めない、という優先順位である。</p>
