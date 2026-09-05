@@ -88,6 +88,13 @@ body{
 .site-nav a[aria-current="page"]{color:var(--ink);}
 
 .page{max-width:760px; margin:0 auto; padding:64px 40px 90px;}
+.toc{max-width:760px; margin:0 auto; padding:26px 40px 8px; border-bottom:1px solid var(--rule); background:var(--paper-raised);}
+.toc-head{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:6px;}
+.toc a{display:grid; grid-template-columns:5.2em 1fr; gap:14px; align-items:baseline; padding:8px 0; border-top:1px solid var(--rule); color:var(--ink); text-decoration:none; font-size:14px; font-weight:600;}
+.toc a:first-of-type{border-top:none;}
+.toc a:hover span:last-child{color:var(--accent);}
+.toc-num{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--accent2); letter-spacing:.05em;}
+.chapter{scroll-margin-top:80px;}
 
 .cover{max-width:760px; margin:0 auto; padding:56px 40px 60px; border-bottom:1px solid var(--rule);}
 .cover-kicker{
@@ -205,7 +212,7 @@ sup.fnref a{color:inherit; text-decoration:none;}
   a{color:inherit; text-decoration:underline;}
 }
 @media (max-width:600px){
-  .page,.cover,.pagefoot{padding-left:20px; padding-right:20px;}
+  .page,.cover,.pagefoot,.toc{padding-left:20px; padding-right:20px;}
   .site-header-inner{padding:12px 20px; gap:12px;}
   .site-header img{height:32px;}
   .site-nav{gap:10px 14px; font-size:11.5px; flex-wrap:wrap; justify-content:flex-end;}
@@ -250,9 +257,22 @@ sup.fnref a{color:inherit; text-decoration:none;}
   </div>
 </section>
 
+<nav class="toc" aria-label="目次">
+  <div class="toc-head">Contents</div>
+  <a href="#prologue"><span class="toc-num">Prologue</span><span>まえがき</span></a>
+  <a href="#ch01"><span class="toc-num">01</span><span>体験の進行と音楽の同期</span></a>
+  <a href="#ch02"><span class="toc-num">02</span><span>手の高さで叩くリズムゲーム</span></a>
+  <a href="#ch03"><span class="toc-num">03</span><span>マスクそのものを当たり判定にする</span></a>
+  <a href="#ch04"><span class="toc-num">04</span><span>Questの手を基準に、映像由来の姿勢を合わせ込む</span></a>
+  <a href="#ch05"><span class="toc-num">05</span><span>判定結果を、実際に腕を引くワイヤーへ送る</span></a>
+  <a href="#ch06"><span class="toc-num">06</span><span>朽ちた舞台とシェーダー</span></a>
+  <a href="#ch07"><span class="toc-num">07</span><span>XR側の設定と、会場での負荷対策</span></a>
+  <a href="#epilogue"><span class="toc-num">Epilogue</span><span>あとがき</span></a>
+</nav>
+
 <div class="page">
 
-<section class="chapter">
+<section class="chapter" id="prologue">
   <div class="chapter-head">
     <span class="chapter-num">Prologue</span>
     <span class="chapter-stage">Scope Note</span>
@@ -264,7 +284,7 @@ sup.fnref a{color:inherit; text-decoration:none;}
   <p>そうなると、設計のあらゆる場所で同じ問いに突き当たる。映像、マスク、姿勢推定、手指トラッキング、音楽。毎フレーム届くこれらの情報のうち、どれを信じて人の体を動かすのか。PC側から届く推定結果は情報量が多いが、遅れることも壊れることもある。Questの手指トラッキングは関節数こそ少ないが、目の前の体を直接測っている。Unity側では、判定とワイヤーはQuestの実測と音楽の時計だけを見る、映像と姿勢推定は表示にしか使わない、と決めた。この振り分けが各章で繰り返し出てくる。</p>
 </section>
 
-<section class="chapter">
+<section class="chapter" id="ch01">
   <div class="chapter-head">
     <span class="chapter-num">Chapter 01</span>
     <span class="chapter-stage">Stage Direction</span>
@@ -333,7 +353,7 @@ sup.fnref a{color:inherit; text-decoration:none;}
   </div>
 </section>
 
-<section class="chapter">
+<section class="chapter" id="ch02">
   <div class="chapter-head">
     <span class="chapter-num">Chapter 02</span>
     <span class="chapter-stage">Rhythm Judgment</span>
@@ -360,7 +380,7 @@ sup.fnref a{color:inherit; text-decoration:none;}
   </div>
 </section>
 
-<section class="chapter">
+<section class="chapter" id="ch03">
   <div class="chapter-head">
     <span class="chapter-num">Chapter 03</span>
     <span class="chapter-stage">Silhouette as Collider</span>
@@ -379,7 +399,7 @@ sup.fnref a{color:inherit; text-decoration:none;}
   <p>ステレオ映像なので、左目用・右目用それぞれのマスクで同じ点を独立にサンプリングし、両目が同時に「人物あり」と判定して初めて命中とする。これは、片目のマスクだけがノイズで誤反応した場合に、誤判定をそのまま採用してしまわないためのガードである。判定点1つにつき、中心と、その周囲8点のリング状のサンプル点も見て、一定割合（既定50%）以上が命中していれば「衝突」とする設計になっており、マスクの輪郭付近のギザギザした境界で判定が一瞬だけ点滅するような誤反応を抑えている。</p>
 </section>
 
-<section class="chapter">
+<section class="chapter" id="ch04">
   <div class="chapter-head">
     <span class="chapter-num">Chapter 04</span>
     <span class="chapter-stage">Pose Fusion</span>
@@ -425,7 +445,7 @@ sup.fnref a{color:inherit; text-decoration:none;}
   </div>
 </section>
 
-<section class="chapter">
+<section class="chapter" id="ch05">
   <div class="chapter-head">
     <span class="chapter-num">Chapter 05</span>
     <span class="chapter-stage">Physical Actuation</span>
@@ -451,7 +471,7 @@ sup.fnref a{color:inherit; text-decoration:none;}
   <p>物理的に人を操作する装置である以上、安全側の設計にも相応の手当てが要る。装置の起動時には「操作対象が誰も装着していない状態」であることを確認する試験を行い、参加者が両手の親指と人差し指をつまんだ状態を5秒間続けるジェスチャー、またはキーボードのEscapeキーで、いつでも緊急停止できるようにしてある（誤って一瞬つまんだだけでは発動せず、意図して続けたときだけ発動する長さにしてある）。</p>
 </section>
 
-<section class="chapter">
+<section class="chapter" id="ch06">
   <div class="chapter-head">
     <span class="chapter-num">Chapter 06</span>
     <span class="chapter-stage">Art Direction / Shaders</span>
@@ -572,7 +592,7 @@ sup.fnref a{color:inherit; text-decoration:none;}
   </div>
 </section>
 
-<section class="chapter">
+<section class="chapter" id="ch07">
   <div class="chapter-head">
     <span class="chapter-num">Chapter 07</span>
     <span class="chapter-stage">XR / Rendering</span>
@@ -606,7 +626,7 @@ sup.fnref a{color:inherit; text-decoration:none;}
   </div>
 </section>
 
-<section class="chapter">
+<section class="chapter" id="epilogue">
   <div class="chapter-head">
     <span class="chapter-num">Epilogue</span>
     <span class="chapter-stage">Summary</span>
