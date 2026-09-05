@@ -142,8 +142,11 @@ table.data th{
   color:var(--ink-faint); text-transform:uppercase; border-bottom:1px solid var(--rule-strong); padding:8px 14px 8px 0;
 }
 table.data td{border-bottom:1px solid var(--rule); padding:10px 14px 10px 0; vertical-align:top;}
-table.data td.num{font-family:"IBM Plex Mono",monospace; color:var(--accent2); font-weight:700; white-space:nowrap;}
-table.data td.label{font-weight:700; white-space:nowrap;}
+table.data td.num{font-family:"IBM Plex Mono",monospace; color:var(--accent2); font-weight:700;}
+table.data{table-layout:fixed;}
+table.data th:first-child, table.data td:first-child{width:38%;}
+table.data td{overflow-wrap:anywhere;}
+table.data td.label{font-weight:700;}
 
 .diagram{margin:30px 0; border:1px solid var(--rule); background:var(--paper-raised); padding:22px; page-break-inside:avoid;}
 .diagram-title{font-family:"Noto Sans JP",sans-serif; font-size:12.5px; font-weight:700; color:var(--ink-faint); margin-bottom:14px;}
