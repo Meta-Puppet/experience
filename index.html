@@ -175,6 +175,9 @@ sup.fnref a{color:inherit; text-decoration:none;}
 .embed iframe{width:100%; aspect-ratio:16/9; border:1px solid var(--rule-strong); border-radius:2px; display:block; background:#000;}
 .embed img{width:100%; height:auto; border:1px solid var(--rule-strong); border-radius:2px; display:block;}
 .embed-caption{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint); margin-top:8px;}
+.embed .seq{display:flex; gap:8px;}
+.embed .seq img{flex:1 1 0; min-width:0; width:auto;}
+@media (max-width:600px){ .embed .seq{gap:4px;} }
 
 .signature{
   margin-top:56px; padding-top:22px; border-top:1px solid var(--rule); display:flex;
@@ -472,6 +475,16 @@ sup.fnref a{color:inherit; text-decoration:none;}
   <p>この体験でいちばん演出的に重要なのは、三人称の人形が、本人の実写映像に置き換わる瞬間である。ここは専用のシェーダーを書いた。仕組みは1枚のしきい値マップに集約されている。人形の表面を既定48×48の格子に切り、格子ごとに乱数で固有の値を持たせ、その上にInterleaved Gradient Noise<sup class="fnref" id="fnref-dither"><a href="#fn-dither">[2]</a></sup>というより細かい規則的なノイズを混ぜて、画素ごとに0から1の値を1つ決める。進行度がその値を超えた画素から、人形の色の代わりに本人の映像が表示される。値の低い画素から先に切り替わるので、序盤はまばらな点の群れ、終盤は面になり、写真の現像に近い見え方になる。しきい値の判定幅は0.04と狭くしてあって、境界がなめらかに溶けずに、粒のまま進む。</p>
 
   <p>細部も2つ足してある。格子の乱数は時間でわずかに揺らしていて、進行が止まっている間も粒がちらちらと入れ替わり続ける。切り替わりつつある境界の帯には薄い青白色をわずかに足していて、いま現像が進んでいる場所だけが少し明るく見える。表示される本人の映像は、<a href="https://meta-puppet.github.io/pipeline/">PC側</a>のVR表示シェーダーと同じ経路で届くYUVのステレオ映像とRVMマスクで、左右の目で別々のテクスチャを読み、マスクの外側の画素はそもそも現れない。人形の上に「現像」されるのは、切り抜かれた本人だけである。</p>
+
+  <div class="embed">
+    <div class="seq">
+      <img src="morph_1.png" alt="現像の序盤。人形の両手の部分だけに粒状の実写が現れ始めている" loading="lazy">
+      <img src="morph_2.png" alt="現像の中盤。人形の上半身が格子状の粒に置き換わり、実写と人形が混ざっている" loading="lazy">
+      <img src="morph_3.png" alt="現像の終盤。人形が本人の実写映像にほぼ置き換わり、両手でリングを叩いている" loading="lazy">
+    </div>
+    <div class="embed-caption">人形が本人に変わる瞬間。両手から粒状に現像が始まり、格子ごとの粒が面になって、本人の実写に置き換わる</div>
+  </div>
+
 
   <h3>照明とポストエフェクトの段階連動</h3>
   <p>演出の強度は、体験が一人称・人形・実写のどの段階まで進んだかに応じて上がる1つの数値で持っていて、Bloom（光のにじみ）、色調、ビネット（画面周辺の暗さ）、フォグの濃度、舞台照明は毎フレームこの数値から決まる。拍に同期した明滅もこの上に乗る。序盤は沈んだ画で始まり、実写段階で照明ごとピークに達する。個々のエフェクトのタイムラインを手で並べる管理をしたくなかったので、こうした。</p>
